@@ -13,6 +13,7 @@ function Map() {
             Assets.load(mapUrl)
             .then((result) => {
                 setTexture(result)
+                console.log(result.source.height);
             });
         }
         

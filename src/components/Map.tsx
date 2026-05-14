@@ -24,6 +24,8 @@ function Map() {
             texture={texture}
             x={-300}
             y={-300} 
+            height={300}
+            width={900}
          />
     )
 }

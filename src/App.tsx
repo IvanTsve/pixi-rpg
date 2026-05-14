@@ -8,6 +8,8 @@ extend({ Container, Graphics })
 export default function App() {
   return (
       <Application
+      width={900}
+      height={500}
         background={'#1099bb'}
         onInit={(app) => {
           if (import.meta.env.DEV) {
@@ -15,7 +17,7 @@ export default function App() {
           }
         }}
       >
-        <pixiContainer x={300} y={400}>
+        <pixiContainer x={300} y={500}>
           <Map />
           <Wall />
         </pixiContainer>

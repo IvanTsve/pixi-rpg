@@ -1,5 +1,6 @@
 import { Application } from '@pixi/react'
 import { Level } from './components/Level'
+import { Hero } from './components/Hero'
 export default function App() {
   return (
     <Application
@@ -8,6 +9,7 @@ export default function App() {
       background="#1099bb"
     >
     <Level />
+    <Hero />
     </Application>
   )
 }

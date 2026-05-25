@@ -21,7 +21,7 @@ import { calculateHeroMovement } from './helpers/hero';
 
 export const Hero = () => {
     const [heroTexture, setHeroTexture] = useState(Texture.EMPTY);
-    const [ heroPosition, setHeroPosition ] = useState(defaultPosition);
+    const positionRef = useRef({ ...defaultPosition });
     const keysPressed = useRef(new Set());
     const heroRef = useRef(null);
     const frameIndex = useRef(0);
@@ -56,10 +56,12 @@ export const Hero = () => {
         if (!heroRef.current || !sheetRef.current) {
             return;
         }
-        const {position, isMoving, scaleX} = calculateHeroMovement(heroPosition, delta, keysPressed, keyActions, defaultScale);
+        const {position, isMoving, scaleX} = calculateHeroMovement(positionRef.current, delta, keysPressed, keyActions, defaultScale);
         const sheetSource = sheetRef.current.source;
         if (isMoving) {
-            setHeroPosition(position);
+            positionRef.current = position;
+            heroRef.current.x = position.x;
+            heroRef.current.y = position.y;
             heroRef.current.scale.x = scaleX;
             animationTimer.current += delta.deltaMS;
 
@@ -77,11 +79,10 @@ export const Hero = () => {
                 });
             }
         } 
-        
-        
     });
 
     return (
-        <pixiSprite ref={heroRef} texture={heroTexture} position={heroPosition} anchor={0.5} scale={defaultScale} />
+        <pixiSprite ref={heroRef} texture={heroTexture} x={defaultPosition.x} y={defaultPosition.y} anchor={0.5} scale={defaultScale} />
+    
     );
 };

@@ -13,9 +13,14 @@ export const defaultPosition = {
 }
 
 export const SPEED = 5;
+export const defaultScale = 0.7;
 export const keyActions = {
-  w: { dx: 0, dy: -SPEED, scaleX: 1 },
-  s: { dx: 0, dy: SPEED, scaleX: 1 },
-  a: { dx: -SPEED, dy: 0, scaleX: -1 },
-  d: { dx: SPEED, dy: 0, scaleX: 1 },
+  w: { dx: 0, dy: -SPEED, scaleX: defaultScale },
+  s: { dx: 0, dy: SPEED, scaleX: defaultScale },
+  a: { dx: -SPEED, dy: 0, scaleX: -defaultScale },
+  d: { dx: SPEED, dy: 0, scaleX: defaultScale },
 };
+
+export const FRAME_WIDTH = 200;
+export const FRAME_HEIGHT = 150;
+export const FRAME_DURATION = 100;

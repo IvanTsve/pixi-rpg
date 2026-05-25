@@ -15,22 +15,30 @@ import {
 } from '@pixi/react';
 extend({ Sprite });
 
-import { defaultPosition, keyActions } from '../lib/constants';
-import { useHeroPosition } from './helpers/hero';
+import { defaultPosition, keyActions, defaultScale, 
+    FRAME_WIDTH, FRAME_HEIGHT, FRAME_DURATION } from '../lib/constants';
+import { calculateHeroMovement } from './helpers/hero';
 
 export const Hero = () => {
     const [heroTexture, setHeroTexture] = useState(Texture.EMPTY);
     const [ heroPosition, setHeroPosition ] = useState(defaultPosition);
     const keysPressed = useRef(new Set());
     const heroRef = useRef(null);
+    const frameIndex = useRef(0);
+    const maxFrames = useRef(0);
+    const sheetRef = useRef(null); 
+    const animationTimer = useRef(0);
+
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_HERO_URL).then((result) => {
-            const frame = new Rectangle(0, 0, 200, 150);
-            const heroTexture = new Texture({
-                source: result,
+            sheetRef.current = result;
+            const frame = new Rectangle(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+            maxFrames.current = Math.floor(result.width / frame.width);
+            const firstFrame = new Texture({
+                source: result.source,  // use .source for sub-textures
                 frame,
             });
-            setHeroTexture(heroTexture);
+            setHeroTexture(firstFrame);
         });
 
         const onUp = (e) => keysPressed.current.delete(e.key.toLowerCase());
@@ -45,18 +53,35 @@ export const Hero = () => {
 
     useTick((delta) => {
 
-        if (!heroRef.current) {
+        if (!heroRef.current || !sheetRef.current) {
             return;
         }
-        const {position, isMoving} = useHeroPosition(heroPosition, delta, keysPressed, keyActions);
+        const {position, isMoving, scaleX} = calculateHeroMovement(heroPosition, delta, keysPressed, keyActions, defaultScale);
+        const sheetSource = sheetRef.current.source;
         if (isMoving) {
             setHeroPosition(position);
-        }
+            heroRef.current.scale.x = scaleX;
+            animationTimer.current += delta.deltaMS;
+
+            if (animationTimer.current >= FRAME_DURATION) {
+                animationTimer.current -= FRAME_DURATION;
+                frameIndex.current = (frameIndex.current + 1) % maxFrames.current;
+                heroRef.current.texture = new Texture({
+                    source: sheetSource,
+                    frame: new Rectangle(
+                        frameIndex.current * FRAME_WIDTH,
+                        0,
+                        FRAME_WIDTH,
+                        FRAME_HEIGHT
+                    ),
+                });
+            }
+        } 
         
         
     });
 
     return (
-        <pixiSprite ref={heroRef} texture={heroTexture} position={heroPosition} anchor={0.5} scale={0.7} />
+        <pixiSprite ref={heroRef} texture={heroTexture} position={heroPosition} anchor={0.5} scale={defaultScale} />
     );
 };

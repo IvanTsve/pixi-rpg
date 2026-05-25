@@ -1,11 +1,12 @@
-export const useHeroPosition = ({x, y}, delta, keysPressed, keyActions) => {
+export const calculateHeroMovement = ({x, y}, delta, keysPressed, keyActions, defaultScale) => {
     let isMoving = false;
     let position = {
      x: x,
      y: y,
     };
+    var action = null;
     for (const key of keysPressed.current) {
-        const action = keyActions[key];
+        action = keyActions[key];
         
         if (action) {
             position.x += action.dx * delta.deltaTime;
@@ -13,5 +14,5 @@ export const useHeroPosition = ({x, y}, delta, keysPressed, keyActions) => {
             isMoving = true;
         }
     }
-   return { position, isMoving };
+   return { position, isMoving, scaleX: action ? action.scaleX : defaultScale };
 }

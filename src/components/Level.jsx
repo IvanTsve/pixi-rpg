@@ -13,14 +13,24 @@ import {
 } from '@pixi/react';
 extend({ Sprite });
 export const Level = () => {
-    const [texture, setTexture] = useState(Texture.EMPTY);
+    const [mapTexture, setMapTexture] = useState(Texture.EMPTY);
+    const [wallTexture, setWallTexture] = useState(Texture.EMPTY);
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_MAP_URL).then((result) => {
-            setTexture(result);
+            setMapTexture(result);
+        });
+        Assets.load(import.meta.env.VITE_PIXI_WALL_URL).then((result) => {
+            setWallTexture(result);
         });
     }, []);
   return (
-   <pixiSprite texture={texture} x={0} y={100} />
+    <>
+        <pixiSprite texture={mapTexture} x={0} y={100} />
+        {Array.from({length: 6}).map((_, index) => (
+            <pixiSprite texture={wallTexture} x={150}  y={-100 + (index * 50)}  />
+        ))}
+
+    </>
   )
 }
 export default Level;

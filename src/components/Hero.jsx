@@ -2,6 +2,7 @@ import {
     Assets,
     Texture,
     Sprite,
+    Rectangle,
 } from 'pixi.js';
 import {
     useEffect,
@@ -18,7 +19,12 @@ export const Hero = () => {
 
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_HERO_URL).then((result) => {
-            setHeroTexture(result);
+            const frame = new Rectangle(0, 0, 200, 150);
+            const heroTexture = new Texture({
+                source: result,
+                frame,
+            });
+            setHeroTexture(heroTexture);
         });
     }, []);
 

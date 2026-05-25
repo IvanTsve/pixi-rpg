@@ -3,6 +3,7 @@ import { initDevtools } from '@pixi/devtools'
 import { Container, Graphics } from 'pixi.js'
 import Map from './components/Map'
 import Wall from './components/Wall'
+import Hero from './components/Hero'
 extend({ Container, Graphics })
 
 export default function App() {
@@ -20,6 +21,7 @@ export default function App() {
         <pixiContainer x={300} y={500}>
           <Map />
           <Wall />
+          <Hero />
         </pixiContainer>
       </Application>
   )

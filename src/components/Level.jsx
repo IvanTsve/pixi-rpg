@@ -27,7 +27,7 @@ export const Level = () => {
     <>
         <pixiSprite texture={mapTexture} x={0} y={100} />
         {Array.from({length: 6}).map((_, index) => (
-            <pixiSprite texture={wallTexture} x={150}  y={-100 + (index * 50)}  />
+            <pixiSprite key={'wall-' + index} texture={wallTexture} x={150}  y={-100 + (index * 50)}  />
         ))}
 
     </>

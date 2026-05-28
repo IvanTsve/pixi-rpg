@@ -26,15 +26,18 @@ export const Hero = () => {
     const sheetRef = useRef(null); 
     const animationTimer = useRef(0);
     const wasMoving = useRef(false);
+    const frameTextures = useRef([]);
 
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_HERO_URL).then((result) => {
             sheetRef.current = result;
             maxFrames.current = Math.floor(result.width / FRAME_WIDTH);
-            const firstFrame = generateTexture(result.source, frameIndex.current)
-            setHeroTexture(firstFrame);
             heroRef.current.x = defaultPosition.x;
             heroRef.current.y = defaultPosition.y;
+            for (let i = 0; i < maxFrames.current; i++) {
+                frameTextures.current[i] = generateTexture(result.source, i);
+            }
+            setHeroTexture(frameTextures.current[0]);
         });
 
         const onUp = (e) => keysPressed.current.delete(e.key.toLowerCase());
@@ -53,7 +56,6 @@ export const Hero = () => {
             return;
         }
         const {x,y, isMoving, scaleX} = calculateHeroMovement(positionRef.current.x, positionRef.current.y, delta, keysPressed, keyActions, defaultScale);
-        const sheetSource = sheetRef.current.source;
         if (isMoving) {
             wasMoving.current = true;
             positionRef.current = {x,y};
@@ -65,12 +67,12 @@ export const Hero = () => {
             if (animationTimer.current >= FRAME_DURATION) {
                 animationTimer.current -= FRAME_DURATION;
                 frameIndex.current = (frameIndex.current + 1) % maxFrames.current;
-                heroRef.current.texture = generateTexture(sheetSource, frameIndex.current)
+                heroRef.current.texture = frameTextures.current[frameIndex.current];
             }
         } else if (wasMoving.current) {
             wasMoving.current = false;
             frameIndex.current = 0;
-            heroRef.current.texture = generateTexture(sheetSource, frameIndex.current)
+            heroRef.current.texture = frameTextures.current[frameIndex.current];
         }
     });
 

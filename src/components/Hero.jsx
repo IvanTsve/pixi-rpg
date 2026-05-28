@@ -2,7 +2,6 @@ import {
     Assets,
     Texture,
     Sprite,
-    Rectangle,
 } from 'pixi.js';
 import {
     useEffect,
@@ -13,9 +12,8 @@ import {
     extend,
     useTick,
 } from '@pixi/react';
-import { defaultPosition, keyActions, defaultScale, FRAME_WIDTH, FRAME_HEIGHT, FRAME_DURATION } from '../lib/constants';
-import { calculateHeroMovement } from './helpers/hero';
-import { generateTexture } from './helpers/hero';
+import { defaultPosition, keyActions, defaultScale, FRAME_WIDTH, FRAME_DURATION } from '../lib/constants';
+import { calculateHeroMovement, generateTexture } from './helpers/hero';
 extend({ Sprite });
 
 export const Hero = () => {
@@ -32,9 +30,8 @@ export const Hero = () => {
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_HERO_URL).then((result) => {
             sheetRef.current = result;
-            const frame = new Rectangle(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-            maxFrames.current = Math.floor(result.width / frame.width);
-            const firstFrame = generateTexture(result.source, frameIndex.current, FRAME_WIDTH, FRAME_HEIGHT)
+            maxFrames.current = Math.floor(result.width / FRAME_WIDTH);
+            const firstFrame = generateTexture(result.source, frameIndex.current)
             setHeroTexture(firstFrame);
             heroRef.current.x = defaultPosition.x;
             heroRef.current.y = defaultPosition.y;
@@ -55,25 +52,25 @@ export const Hero = () => {
         if (!heroRef.current || !sheetRef.current) {
             return;
         }
-        const {position, isMoving, scaleX} = calculateHeroMovement(positionRef.current, delta, keysPressed, keyActions, defaultScale);
+        const {x,y, isMoving, scaleX} = calculateHeroMovement(positionRef.current.x, positionRef.current.y, delta, keysPressed, keyActions, defaultScale);
         const sheetSource = sheetRef.current.source;
         if (isMoving) {
             wasMoving.current = true;
-            positionRef.current = position;
-            heroRef.current.x = position.x;
-            heroRef.current.y = position.y;
+            positionRef.current = {x,y};
+            heroRef.current.x = x;
+            heroRef.current.y = y;
             heroRef.current.scale.x = scaleX;
             animationTimer.current += delta.deltaMS;
 
             if (animationTimer.current >= FRAME_DURATION) {
                 animationTimer.current -= FRAME_DURATION;
                 frameIndex.current = (frameIndex.current + 1) % maxFrames.current;
-                heroRef.current.texture = generateTexture(sheetSource, frameIndex.current, FRAME_WIDTH, FRAME_HEIGHT)
+                heroRef.current.texture = generateTexture(sheetSource, frameIndex.current)
             }
         } else if (wasMoving.current) {
             wasMoving.current = false;
             frameIndex.current = 0;
-            heroRef.current.texture = generateTexture(sheetSource, frameIndex.current, FRAME_WIDTH, FRAME_HEIGHT)
+            heroRef.current.texture = generateTexture(sheetSource, frameIndex.current)
         }
     });
 

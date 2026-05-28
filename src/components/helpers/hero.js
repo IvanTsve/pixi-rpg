@@ -2,27 +2,25 @@ import {
     Texture,
     Rectangle,
 } from 'pixi.js';
+import { FRAME_WIDTH, FRAME_HEIGHT } from '../../lib/constants';
 
-export const calculateHeroMovement = ({x, y}, delta, keysPressed, keyActions, defaultScale) => {
+export const calculateHeroMovement = (x, y, delta, keysPressed, keyActions, defaultScale) => {
     let isMoving = false;
-    let position = {
-     x: x,
-     y: y,
-    };
+    
     let action = null;
     for (const key of keysPressed.current) {
         action = keyActions[key];
         
         if (action) {
-            position.x += action.dx * delta.deltaTime;
-            position.y += action.dy * delta.deltaTime;
+            x += action.dx * delta.deltaTime;
+            y += action.dy * delta.deltaTime;
             isMoving = true;
         }
     }
-   return { position, isMoving, scaleX: action ? action.scaleX : defaultScale };
+   return { x, y, isMoving, scaleX: action ? action.scaleX : defaultScale };
 }
 
-export const generateTexture = (sheetSource, frameIndex, FRAME_WIDTH, FRAME_HEIGHT) => {
+export const generateTexture = (sheetSource, frameIndex) => {
     return new Texture({
         source: sheetSource,
         frame: new Rectangle(

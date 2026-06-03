@@ -10,7 +10,7 @@ export const mapWalls = [
 ];
 
 export const defaultPosition = {
-    x: 300,
+    x: 200,
     y: 280,
 }
 

@@ -21,6 +21,10 @@ export const keyActions = {
   s: { dx: 0, dy: SPEED, scaleX: defaultScale },
   a: { dx: -SPEED, dy: 0, scaleX: -defaultScale },
   d: { dx: SPEED, dy: 0, scaleX: defaultScale },
+  arrowup: { dx: 0, dy: -SPEED, scaleX: defaultScale },
+  arrowdown: { dx: 0, dy: SPEED, scaleX: defaultScale },
+  arrowleft: { dx: -SPEED, dy: 0, scaleX: -defaultScale },
+  arrowright: { dx: SPEED, dy: 0, scaleX: defaultScale },
 };
 
 export const FRAME_WIDTH = 200;

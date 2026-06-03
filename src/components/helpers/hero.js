@@ -3,6 +3,7 @@ import {
     Rectangle,
 } from 'pixi.js';
 import { FRAME_WIDTH, FRAME_HEIGHT } from '../../lib/constants';
+import { canPlayerMove } from './collision';
 
 export const calculateHeroMovement = (x, y, delta, keysPressed, keyActions, defaultScale) => {
     let isMoving = false;
@@ -11,7 +12,7 @@ export const calculateHeroMovement = (x, y, delta, keysPressed, keyActions, defa
     for (const key of keysPressed.current) {
         action = keyActions[key];
         
-        if (action) {
+        if (action && !canPlayerMove(x + action.dx, y + action.dy, delta.deltaTime)) {
             x += action.dx * delta.deltaTime;
             y += action.dy * delta.deltaTime;
             isMoving = true;

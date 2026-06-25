@@ -27,7 +27,12 @@ export const Hero = () => {
     const animationTimer = useRef(0);
     const wasMoving = useRef(false);
     const frameTextures = useRef([]);
-
+    const attackTextures = useRef([]);
+    const isAttacking = useRef(false);
+    const attackFrameIndex = useRef(0);
+    const attackMaxFrames = useRef(0);
+    const attackSheetRef = useRef(null);
+    const attackAnimationTimer = useRef(0);
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_HERO_URL).then((result) => {
             sheetRef.current = result;
@@ -40,8 +45,32 @@ export const Hero = () => {
             setHeroTexture(frameTextures.current[0]);
         });
 
+        Assets.load(import.meta.env.VITE_PIXI_HERO_ATTACK_URL).then((result) => {
+            attackSheetRef.current = result;
+            attackMaxFrames.current = Math.floor(result.width / SPRITE_FRAME_WIDTH);
+            for (let i = 0; i < attackMaxFrames.current; i++) {
+                attackTextures.current[i] = generateTexture(result.source, i);
+            }
+        });
+
+
+
         const onUp = (e) => keysPressed.current.delete(e.key.toLowerCase());
-        const onDown = (e) => keysPressed.current.add(e.key.toLowerCase());
+        const onDown = (e) => {
+            keysPressed.current.add(e.key.toLowerCase());
+            if (e.keyCode === 32) {
+                onAttack(e);
+            }
+        };
+        const onAttack = () => {
+            if (isAttacking.current || attackMaxFrames.current === 0) return;
+            isAttacking.current = true;
+            attackFrameIndex.current = 0;
+            attackAnimationTimer.current = 0;
+            if (heroRef.current && attackTextures.current[0]) {
+                heroRef.current.texture = attackTextures.current[0];
+            }
+        };
         window.addEventListener("keydown", onDown);
         window.addEventListener("keyup", onUp);
         return () => {
@@ -73,6 +102,19 @@ export const Hero = () => {
             wasMoving.current = false;
             frameIndex.current = 0;
             heroRef.current.texture = frameTextures.current[frameIndex.current];
+        } else if (isAttacking.current) {
+            attackAnimationTimer.current += delta.deltaMS;
+            if (attackAnimationTimer.current >= FRAME_DURATION) {
+                attackAnimationTimer.current -= FRAME_DURATION;
+                attackFrameIndex.current += 1;
+                if (attackFrameIndex.current >= attackMaxFrames.current) {
+                    isAttacking.current = false;
+                    attackFrameIndex.current = 0;
+                    heroRef.current.texture = frameTextures.current[frameIndex.current];
+                } else {
+                    heroRef.current.texture = attackTextures.current[attackFrameIndex.current];
+                }
+            }
         }
     });
 

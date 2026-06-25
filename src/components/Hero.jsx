@@ -12,7 +12,7 @@ import {
     extend,
     useTick,
 } from '@pixi/react';
-import { defaultPosition, keyActions, defaultScale, FRAME_WIDTH, FRAME_DURATION } from '../lib/constants';
+import { defaultPosition, keyActions, defaultScale, SPRITE_FRAME_WIDTH, FRAME_DURATION } from '../lib/constants';
 import { calculateHeroMovement, generateTexture } from './helpers/hero';
 extend({ Sprite });
 
@@ -31,7 +31,7 @@ export const Hero = () => {
     useEffect(() => {
         Assets.load(import.meta.env.VITE_PIXI_HERO_URL).then((result) => {
             sheetRef.current = result;
-            maxFrames.current = Math.floor(result.width / FRAME_WIDTH);
+            maxFrames.current = Math.floor(result.width / SPRITE_FRAME_WIDTH);
             heroRef.current.x = defaultPosition.x;
             heroRef.current.y = defaultPosition.y;
             for (let i = 0; i < maxFrames.current; i++) {

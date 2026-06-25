@@ -1,9 +1,12 @@
-import { mapWalls, FRAME_WIDTH, FRAME_HEIGHT, defaultScale } from '../../lib/constants';
+import { mapWalls, TILE_WIDTH, TILE_HEIGHT, MAP_GRID_ROW_OFFSET } from '../../lib/constants';
 
-export const canPlayerMove = (x, y, delta) => {
+export const canPlayerMove = (x, y) => {
+    const row = Math.floor(y / TILE_HEIGHT) - MAP_GRID_ROW_OFFSET;
+    const col = Math.floor(x / TILE_WIDTH);
 
-    let row = Math.floor((y / (FRAME_HEIGHT * 0.3)) - 1);
-    let col = Math.floor(x  / (FRAME_WIDTH * 0.27));
+    if (row < 0 || row >= mapWalls.length || col < 0 || col >= mapWalls[0].length) {
+        return false;
+    }
 
-    return mapWalls[row][col] == 1;  // 0 = walk, 1 = wall
+    return mapWalls[row][col] === 0;
 };

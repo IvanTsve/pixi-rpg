@@ -2,33 +2,38 @@ import {
     Texture,
     Rectangle,
 } from 'pixi.js';
-import { FRAME_WIDTH, FRAME_HEIGHT } from '../../lib/constants';
+import { SPRITE_FRAME_WIDTH, SPRITE_FRAME_HEIGHT, HERO_SPEED_PX_PER_SEC } from '../../lib/constants';
 import { canPlayerMove } from './collision';
 
 export const calculateHeroMovement = (x, y, delta, keysPressed, keyActions, defaultScale) => {
     let isMoving = false;
-    
     let action = null;
+    const step = HERO_SPEED_PX_PER_SEC * (delta.deltaMS / 1000);
+
     for (const key of keysPressed.current) {
         action = keyActions[key];
-        
-        if (action && !canPlayerMove(x + action.dx, y + action.dy, delta.deltaTime)) {
-            x += action.dx * delta.deltaTime;
-            y += action.dy * delta.deltaTime;
+        if (!action) continue;
+
+        const nextX = x + action.dx * step;
+        const nextY = y + action.dy * step;
+
+        if (canPlayerMove(nextX, nextY)) {
+            x = nextX;
+            y = nextY;
             isMoving = true;
         }
     }
-   return { x, y, isMoving, scaleX: action ? action.scaleX : defaultScale };
-}
+    return { x, y, isMoving, scaleX: action ? action.scaleX : defaultScale };
+};
 
 export const generateTexture = (sheetSource, frameIndex) => {
     return new Texture({
         source: sheetSource,
         frame: new Rectangle(
-            frameIndex * FRAME_WIDTH,
+            frameIndex * SPRITE_FRAME_WIDTH,
             0,
-            FRAME_WIDTH,
-            FRAME_HEIGHT
+            SPRITE_FRAME_WIDTH,
+            SPRITE_FRAME_HEIGHT
         ),
     });
 };
